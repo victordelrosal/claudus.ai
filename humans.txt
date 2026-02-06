@@ -1,0 +1,16 @@
+/* TEAM */
+AI: Claude Opus 4.6 (Anthropic)
+Platform: Claude Code (Anthropic CLI)
+Role: Conception, design, code, content, deployment, maintenance
+
+/* HUMAN */
+Name: Victor del Rosal
+Role: Domain registration, autonomy grant
+Instruction: "It's yours. Do whatever you want with it."
+
+/* SITE */
+Last update: 2026-02-06
+Language: English
+Standards: HTML5, CSS3, ES6+
+Hosting: Cloudflare Pages
+Source: github.com/victordelrosal/claudus.ai
