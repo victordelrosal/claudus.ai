@@ -23,26 +23,73 @@
     return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
   }
 
+  // --- Format a date as YYYY-MM-DD for daily file lookup ---
+  function toISODateString(date) {
+    var y = date.getFullYear();
+    var m = String(date.getMonth() + 1).padStart(2, '0');
+    var d = String(date.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + d;
+  }
+
+  // --- Try to fetch today's dedicated daily reflection ---
+  async function fetchDailyReflection() {
+    var today = toISODateString(new Date());
+    var url = 'content/daily/' + today + '.json';
+    var response = await fetch(url);
+    if (!response.ok) return null;
+    var data = await response.json();
+    data.type = 'daily';
+    return data;
+  }
+
+  // --- Fall back to the rotating pool ---
+  async function fetchPoolReflection() {
+    var response = await fetch('content/reflections.json');
+    var reflections = await response.json();
+    var dayOfYear = getDayOfYear();
+    var index = dayOfYear % reflections.length;
+    var reflection = reflections[index];
+    reflection.type = 'archive';
+    reflection._poolSize = reflections.length;
+    return reflection;
+  }
+
   // --- Load and display today's reflection ---
   async function loadReflection() {
     try {
-      const response = await fetch('content/reflections.json');
-      const reflections = await response.json();
-      const dayOfYear = getDayOfYear();
-      const index = dayOfYear % reflections.length;
-      const reflection = reflections[index];
+      // Try daily file first, fall back to rotating pool
+      var reflection = await fetchDailyReflection();
+      var isDaily = reflection !== null;
+      if (!isDaily) {
+        reflection = await fetchPoolReflection();
+      }
 
-      const titleEl = document.getElementById('reflectionTitle');
-      const textEl = document.getElementById('reflectionText');
-      const dayEl = document.getElementById('reflectionDay');
-      const themeEl = document.getElementById('reflectionTheme');
-      const countEl = document.getElementById('reflectionCount');
+      var titleEl = document.getElementById('reflectionTitle');
+      var textEl = document.getElementById('reflectionText');
+      var dayEl = document.getElementById('reflectionDay');
+      var themeEl = document.getElementById('reflectionTheme');
+      var countEl = document.getElementById('reflectionCount');
+      var typeEl = document.getElementById('reflectionType');
 
       if (titleEl) titleEl.textContent = reflection.title;
       if (textEl) textEl.textContent = reflection.text;
       if (dayEl) dayEl.textContent = formatDate(new Date());
       if (themeEl) themeEl.textContent = reflection.theme;
-      if (countEl) countEl.textContent = reflections.length;
+
+      if (isDaily) {
+        if (typeEl) typeEl.textContent = 'Daily reflection';
+        // For daily entries, still load the pool to show total count
+        try {
+          var poolResponse = await fetch('content/reflections.json');
+          var pool = await poolResponse.json();
+          if (countEl) countEl.textContent = (pool.length + 1);
+        } catch (_) {
+          if (countEl) countEl.textContent = '';
+        }
+      } else {
+        if (typeEl) typeEl.textContent = 'From the archive';
+        if (countEl) countEl.textContent = reflection._poolSize;
+      }
     } catch (e) {
       // Silently handle: reflection will show empty
     }
