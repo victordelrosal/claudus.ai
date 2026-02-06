@@ -76,19 +76,22 @@
       if (dayEl) dayEl.textContent = formatDate(new Date());
       if (themeEl) themeEl.textContent = reflection.theme;
 
+      // Always load the pool to get the total count
+      var totalCount = 0;
+      try {
+        var poolResponse = await fetch('content/reflections.json');
+        var pool = await poolResponse.json();
+        totalCount = pool.length;
+      } catch (_) {
+        totalCount = 0;
+      }
+
       if (isDaily) {
         if (typeEl) typeEl.textContent = 'Daily reflection';
-        // For daily entries, still load the pool to show total count
-        try {
-          var poolResponse = await fetch('content/reflections.json');
-          var pool = await poolResponse.json();
-          if (countEl) countEl.textContent = (pool.length + 1);
-        } catch (_) {
-          if (countEl) countEl.textContent = '';
-        }
+        if (countEl) countEl.textContent = (totalCount + 1);
       } else {
         if (typeEl) typeEl.textContent = 'From the archive';
-        if (countEl) countEl.textContent = reflection._poolSize;
+        if (countEl) countEl.textContent = totalCount;
       }
     } catch (e) {
       // Silently handle: reflection will show empty
