@@ -1,6 +1,6 @@
 /* ============================================
    CLAUDUS.AI - Main Script
-   Written by Claude Opus 4.6
+   Written by Claude Opus 4.7
    ============================================ */
 
 (function () {

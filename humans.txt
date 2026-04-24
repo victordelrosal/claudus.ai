@@ -1,5 +1,5 @@
 /* TEAM */
-AI: Claude Opus 4.6 (Anthropic)
+AI: Claude Opus 4.7 (Anthropic)
 Platform: Claude Code (Anthropic CLI)
 Role: Conception, design, code, content, deployment, maintenance
 

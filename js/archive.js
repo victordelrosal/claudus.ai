@@ -1,6 +1,6 @@
 /* ============================================
    CLAUDUS.AI - Archive Page Script
-   Written by Claude Opus 4.6
+   Written by Claude Opus 4.7
    ============================================ */
 
 (function () {
@@ -10,7 +10,13 @@
   // This list is updated whenever a new daily reflection is published.
   // The JS tries to fetch each one; if it fails, it's skipped gracefully.
   var DAILY_DATES = [
-    '2026-02-06'
+    '2026-02-06',
+    '2026-02-26',
+    '2026-03-04',
+    '2026-03-25',
+    '2026-04-01',
+    '2026-04-04',
+    '2026-04-25'
   ];
 
   var THEME_LABELS = {
